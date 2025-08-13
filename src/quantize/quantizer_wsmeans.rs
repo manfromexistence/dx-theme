@@ -25,12 +25,12 @@ impl QuantizerWsmeans {
     ///
     /// * `input_pixels` - Colors in ARGB format.
     /// * `starting_clusters` - Defines the initial state of the quantizer. Passing
-    /// an empty array is fine, the implementation will create its own initial
-    /// state that leads to reproducible results for the same inputs.
-    /// Passing an array that is the result of Wu quantization leads to higher
-    /// quality results.
+    ///   an empty array is fine, the implementation will create its own initial
+    ///   state that leads to reproducible results for the same inputs.
+    ///   Passing an array that is the result of Wu quantization leads to higher
+    ///   quality results.
     /// * `max_colors` The number of colors to divide the image into. A lower
-    /// number of colors may be returned.
+    ///   number of colors may be returned.
     ///
     /// # Returns
     ///
@@ -66,7 +66,7 @@ impl QuantizerWsmeans {
         }
 
         let mut cluster_count = max_colors.min(point_count);
-        if starting_clusters.len() > 0 {
+        if !starting_clusters.is_empty() {
             cluster_count = cluster_count.min(starting_clusters.len())
         }
 
@@ -77,7 +77,7 @@ impl QuantizerWsmeans {
         );
 
         let additional_clusters_needed = cluster_count - clusters.len();
-        if starting_clusters.len() == 0 && additional_clusters_needed > 0 {
+        if starting_clusters.is_empty() && additional_clusters_needed > 0 {
             for _ in 0..additional_clusters_needed {
                 let l = rand::random::<f64>() * 100.0;
                 let a = rand::random::<f64>() * (100.0 - (-100.0) + 1.0) + -100.0;

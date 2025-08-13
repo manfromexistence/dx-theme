@@ -23,7 +23,7 @@ impl QuantizerCelebi {
     ///
     /// * `pixels` - Colors in ARGB format.
     /// * `max_colors` - The number of colors to divide the image into. A lower number of colors
-    /// may be returned.
+    ///   may be returned.
     ///
     /// # Returns
     ///
