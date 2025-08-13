@@ -1,7 +1,7 @@
 // Fully ported
 
 use crate::htc::viewing_conditions::ViewingConditions;
-use crate::util::color::{argb_from_xyz, linearized, xyz_from_argb};
+use crate::util::color::{argb_from_xyz, xyz_from_argb};
 use crate::util::math::matrix_multiply;
 use std::f64::consts::PI;
 
@@ -37,8 +37,8 @@ impl Cam16 {
         let d_a = self.astar() - other.astar();
         let d_b = self.bstar() - other.bstar();
         let d_eprime = (d_j * d_j + d_a * d_a + d_b * d_b).sqrt();
-        let d_e = 1.41 * d_eprime.powf(0.63);
-        d_e
+
+        1.41 * d_eprime.powf(0.63)
     }
 
     /// Hue in CAM16
