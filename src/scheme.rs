@@ -1,3 +1,5 @@
+pub mod dx;
+
 use crate::palettes::core::CorePalette;
 #[cfg(feature = "serde")]
 use crate::util::color::format_argb_as_rgb;
@@ -89,6 +91,12 @@ impl Serialize for Scheme {
 }
 
 impl Scheme {
+    pub fn new() -> Scheme {
+        Scheme {
+            ..Default::default()
+        }
+    }
+
     pub fn light_from_core_palette(core: &mut CorePalette) -> Scheme {
         Scheme {
             primary: core.a1.tone(40),
