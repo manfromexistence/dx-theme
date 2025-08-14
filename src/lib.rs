@@ -13,3 +13,7 @@ pub mod quantize;
 pub mod scheme;
 pub mod score;
 pub mod util;
+pub mod image;
+pub mod theme;
+
+pub use scheme::Scheme;
