@@ -6,6 +6,17 @@ use crate::util::color::ARGB;
 
 use super::quantizer_map::QuantizerMap;
 
+struct MaximizeArgs<'a> {
+    cube: &'a Box,
+    direction: Direction,
+    first: u8,
+    last: u8,
+    whole_r: i64,
+    whole_g: i64,
+    whole_b: i64,
+    whole_w: i64,
+}
+
 /// A histogram of all the input colors is constructed. It has the shape of a
 /// cube. The cube would be too large if it contained all 16 million colors:
 /// historical best practice is to use 5 bits  of the 8 in each channel,
@@ -210,6 +221,7 @@ impl QuantizerWu {
 
             next_index = 0;
             let mut temp = volume_variance[0];
+            #[allow(clippy::needless_range_loop)]
             for j in 1..=index {
                 if volume_variance[j] > temp {
                     temp = volume_variance[j];
@@ -268,36 +280,36 @@ impl QuantizerWu {
         let whole_b = self.volume(&one, &self.moments_b);
         let whole_w = self.volume(&one, &self.weights);
 
-        let max_r_result = self.maximize(
-            &one,
-            Direction::Red,
-            one.pixels.0.r + 1,
-            one.pixels.1.r,
+        let max_r_result = self.maximize(&MaximizeArgs {
+            cube: &one,
+            direction: Direction::Red,
+            first: one.pixels.0.r + 1,
+            last: one.pixels.1.r,
             whole_r,
             whole_g,
             whole_b,
             whole_w,
-        );
-        let max_g_result = self.maximize(
-            &one,
-            Direction::Green,
-            one.pixels.0.g + 1,
-            one.pixels.1.g,
+        });
+        let max_g_result = self.maximize(&MaximizeArgs {
+            cube: &one,
+            direction: Direction::Green,
+            first: one.pixels.0.g + 1,
+            last: one.pixels.1.g,
             whole_r,
             whole_g,
             whole_b,
             whole_w,
-        );
-        let max_b_result = self.maximize(
-            &one,
-            Direction::Blue,
-            one.pixels.0.b + 1,
-            one.pixels.1.b,
+        });
+        let max_b_result = self.maximize(&MaximizeArgs {
+            cube: &one,
+            direction: Direction::Blue,
+            first: one.pixels.0.b + 1,
+            last: one.pixels.1.b,
             whole_r,
             whole_g,
             whole_b,
             whole_w,
-        );
+        });
 
         let max_r = max_r_result.maximum;
         let max_g = max_g_result.maximum;
@@ -348,21 +360,11 @@ impl QuantizerWu {
         true
     }
 
-    fn maximize(
-        &self,
-        cube: &Box,
-        direction: Direction,
-        first: u8,
-        last: u8,
-        whole_r: i64,
-        whole_g: i64,
-        whole_b: i64,
-        whole_w: i64,
-    ) -> Maximized {
-        let bottom_r = self.bottom(cube, &direction, &self.moments_r);
-        let bottom_g = self.bottom(cube, &direction, &self.moments_g);
-        let bottom_b = self.bottom(cube, &direction, &self.moments_b);
-        let bottom_w = self.bottom(cube, &direction, &self.weights);
+    fn maximize(&self, args: &MaximizeArgs) -> Maximized {
+        let bottom_r = self.bottom(args.cube, &args.direction, &self.moments_r);
+        let bottom_g = self.bottom(args.cube, &args.direction, &self.moments_g);
+        let bottom_b = self.bottom(args.cube, &args.direction, &self.moments_b);
+        let bottom_w = self.bottom(args.cube, &args.direction, &self.weights);
 
         let mut max = 0.0;
         let mut cut = Option::<u8>::None;
@@ -372,11 +374,11 @@ impl QuantizerWu {
         let mut half_b;
         let mut half_w;
 
-        for i in first..last {
-            half_r = bottom_r + self.top(cube, &direction, i, &self.moments_r);
-            half_g = bottom_g + self.top(cube, &direction, i, &self.moments_g);
-            half_b = bottom_b + self.top(cube, &direction, i, &self.moments_b);
-            half_w = bottom_w + self.top(cube, &direction, i, &self.weights);
+        for i in args.first..args.last {
+            half_r = bottom_r + self.top(args.cube, &args.direction, i, &self.moments_r);
+            half_g = bottom_g + self.top(args.cube, &args.direction, i, &self.moments_g);
+            half_b = bottom_b + self.top(args.cube, &args.direction, i, &self.moments_b);
+            half_w = bottom_w + self.top(args.cube, &args.direction, i, &self.weights);
             if half_w == 0 {
                 continue;
             }
@@ -387,10 +389,10 @@ impl QuantizerWu {
             let temp_denominator: f64 = half_w as f64;
             let temp = temp_numerator / temp_denominator;
 
-            half_r = whole_r - half_r;
-            half_g = whole_g - half_g;
-            half_b = whole_b - half_b;
-            half_w = whole_w - half_w;
+            half_r = args.whole_r - half_r;
+            half_g = args.whole_g - half_g;
+            half_b = args.whole_b - half_b;
+            half_w = args.whole_w - half_w;
             if half_w == 0 {
                 continue;
             }

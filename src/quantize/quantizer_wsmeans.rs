@@ -125,12 +125,12 @@ impl QuantizerWsmeans {
                 let previous_distance = point_provider.distance(point, previous_cluster);
                 let mut minimum_distance = previous_distance;
                 let mut new_cluster_index_option: Option<usize> = None;
-                for j in 0..cluster_count {
+                for (j, cluster) in clusters.iter().enumerate() {
                     let distance_index = distance_to_index_matrix[previous_cluster_index][j];
                     if distance_index.distance >= 4.0 * previous_distance {
                         continue;
                     }
-                    let distance = point_provider.distance(point, clusters[j]);
+                    let distance = point_provider.distance(point, *cluster);
                     if distance < minimum_distance {
                         minimum_distance = distance;
                         new_cluster_index_option = Some(j);

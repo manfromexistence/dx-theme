@@ -89,7 +89,7 @@ impl Serialize for Scheme {
 }
 
 impl Scheme {
-    pub fn light_from_core_palette(core: &mut CorePalette) -> Scheme {
+    pub fn light_from_core_palette_mut(core: &mut CorePalette) -> Scheme {
         Scheme {
             primary: core.a1.tone(40),
             on_primary: core.a1.tone(100),
@@ -123,7 +123,7 @@ impl Scheme {
         }
     }
 
-    pub fn dark_from_core_palette(core: &mut CorePalette) -> Scheme {
+    pub fn dark_from_core_palette_mut(core: &mut CorePalette) -> Scheme {
         Scheme {
             primary: core.a1.tone(80),
             on_primary: core.a1.tone(20),

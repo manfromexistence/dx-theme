@@ -116,30 +116,7 @@ impl Cam16 {
     /// * `jstar`: CAM16-UCS J coordinate
     /// * `astar`: CAM16-UCS a coordinate
     /// * `bstar`: CAM16-UCS b coordinate
-    fn new(
-        hue: f64,
-        chroma: f64,
-        j: f64,
-        q: f64,
-        m: f64,
-        s: f64,
-        jstar: f64,
-        astar: f64,
-        bstar: f64,
-    ) -> Self {
-        Self {
-            hue,
-            chroma,
-            j,
-            q,
-            m,
-            s,
-            jstar,
-            astar,
-            bstar,
-        }
-    }
-
+    ///
     /// Create a CAM16 color from a color, assuming the color was viewed in default viewing conditions.
     /// # Arguments
     /// * `argb`: ARGB representation of a color.
